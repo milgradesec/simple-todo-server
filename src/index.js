@@ -1,6 +1,7 @@
 export default {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+
     if (pathname.startsWith("/login") && (request.method == "POST")) {
       const { username, password } = await request.json();
 
