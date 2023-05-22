@@ -1,5 +1,5 @@
 import { Router } from 'itty-router'
-import { json, error, StatusError, ThrowableRouter } from 'itty-router-extras'
+import { json, error, StatusError } from 'itty-router-extras'
 
 const router = Router();
 
@@ -32,9 +32,8 @@ router.post("/login", async request => {
 })
 
 router.post('/lists', async request => {
-  const content = await request.json()
-
   const responseBody = { message: "OK", listId: 23 }
+
   return new Response(JSON.stringify(responseBody), {
     status: 200,
     headers: {
@@ -52,9 +51,8 @@ router.delete('/lists/:id', async request => {
 })
 
 router.post('/lists/:id/items', async request => {
-  const content = await request.json()
-
   const responseBody = { message: "OK", itemId: 14 }
+
   return new Response(JSON.stringify(responseBody), {
     status: 200,
     headers: {
