@@ -7,3 +7,8 @@ env = { }
 
 [triggers]
 crons = [ ]
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "todo-api-prod"
+database_id = "2971226e-6498-4603-a8fc-88fcfee005ea"
