@@ -32,7 +32,7 @@ app.post("/register", async c => {
   )
     .bind(username)
     .first();
-  const response = { message: "OK", userId: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
+  const response = { id: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
   return c.json(response)
 })
 
@@ -45,7 +45,7 @@ app.post("/login", async c => {
     .bind(username)
     .first();
   if (values.password == password) {
-    const response = { message: "OK", userId: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
+    const response = { id: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
     return c.json(response)
   }
   return c.text("Invalid Authentication", { status: 401 });
@@ -66,19 +66,31 @@ app.post('/lists', async c => {
   )
     .bind(name)
     .first();
-  return c.json({ message: "OK", listId: values.id });
 
+  return c.json(values, { status: 201 });
 })
 
-app.put('/lists/:id', async c => {
-  return new Response('OK', { status: 200 });
+app.get('/lists/:listId', async c => {
+  const { listId } = c.req.param();
+
+  const values = await c.env.DB.prepare(
+    `SELECT id FROM lists WHERE id = ? LIMIT 1`
+  )
+    .bind(listId)
+    .first();
+
+  return c.json(values)
 })
 
-app.delete('/lists/:id', async c => {
-  const { id } = c.req.param();
+app.put('/lists/:listId', async c => {
+  return new Response('Not Implemented', { status: 501 });
+})
+
+app.delete('/lists/:listId', async c => {
+  const { listId } = c.req.param();
 
   const info = await c.env.DB.prepare(`DELETE FROM lists WHERE id = ?`)
-    .bind(id)
+    .bind(listId)
     .run();
   if (info.success) {
     return new Response('OK', { status: 200 });
@@ -86,19 +98,15 @@ app.delete('/lists/:id', async c => {
   return new Response('ERROR', { status: 500 });
 })
 
-app.post('/lists/:id/items', async c => {
-  const responseBody = { message: "OK", itemId: 14 }
+app.post('/lists/:listId/items', async c => {
+  // const responseBody = { id: 14 }
 
-  return new Response(JSON.stringify(responseBody), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
+  // return c.json(responseBody);
+  return new Response('Not Implemented', { status: 501 });
 })
 
-app.put('/lists/:id/items/:itemId', async c => {
-  return new Response('OK', { status: 200 });
+app.put('/lists/:listId/items/:itemId', async c => {
+  return new Response('Not Implemented', { status: 501 });
 })
 
 app.all('*', () => new Response('Unauthorized', { status: 401 }))
