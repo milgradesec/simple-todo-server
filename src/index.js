@@ -74,7 +74,7 @@ app.get('/lists/:listId', async c => {
   const { listId } = c.req.param();
 
   const values = await c.env.DB.prepare(
-    `SELECT id FROM lists WHERE id = ? LIMIT 1`
+    `SELECT * FROM lists WHERE id = ? LIMIT 1`
   )
     .bind(listId)
     .first();
