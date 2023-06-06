@@ -54,7 +54,9 @@ app.post("/login", async c => {
 app.post('/lists', async c => {
   const { name } = await c.req.json();
 
-  const info = await c.env.DB.prepare(`INSERT INTO lists (name) VALUES(?)`)
+  const info = await c.env.DB.prepare(
+    `INSERT INTO lists (name) VALUES(?)`
+  )
     .bind(name)
     .run();
   if (!info.success) {
@@ -89,7 +91,9 @@ app.put('/lists/:listId', async c => {
 app.delete('/lists/:listId', async c => {
   const { listId } = c.req.param();
 
-  const info = await c.env.DB.prepare(`DELETE FROM lists WHERE id = ?`)
+  const info = await c.env.DB.prepare(
+    `DELETE FROM lists WHERE id = ?`
+  )
     .bind(listId)
     .run();
   if (info.success) {
