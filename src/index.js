@@ -1,6 +1,10 @@
 import { Hono } from 'hono'
+import { bearerAuth } from 'hono/bearer-auth'
 
 const app = new Hono()
+
+const token = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb"
+app.use('/users/*', bearerAuth({ token }))
 
 app.get('/', async c => {
   return c.text('Serverless Todo API v1', { status: 200 });
@@ -32,7 +36,8 @@ app.post("/register", async c => {
   )
     .bind(username)
     .first();
-  const response = { id: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
+
+  const response = { id: values.id, token: token };
   return c.json(response)
 })
 
@@ -45,7 +50,7 @@ app.post("/login", async c => {
     .bind(username)
     .first();
   if (values.password == password) {
-    const response = { id: values.id, token: "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb" };
+    const response = { id: values.id, token: token };
     return c.json(response)
   }
   return c.text("Invalid Authentication", { status: 401 });
@@ -114,7 +119,6 @@ app.delete('/users/:userId/lists/:listId', async c => {
 
 app.post('/lists/:listId/items', async c => {
   // const responseBody = { id: 14 }
-
   // return c.json(responseBody);
   return new Response('Not Implemented', { status: 501 });
 })
