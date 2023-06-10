@@ -79,7 +79,7 @@ app.post('/users/:userId/lists', async c => {
   }
 
   const values = await c.env.DB.prepare(
-    `SELECT * FROM lists WHERE name = ?1 AND user_id = ?2`
+    `SELECT * FROM lists WHERE name = ?1 AND user_id = ?2 LIMIT 1`
   )
     .bind(name, userId)
     .first();
