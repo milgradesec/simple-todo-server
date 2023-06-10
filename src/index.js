@@ -10,6 +10,9 @@ app.get('/', async c => {
   return c.text('Serverless Todo API v1', { status: 200 });
 });
 
+/**
+ * Register a new user.
+ */
 app.post("/register", async c => {
   const { username, password } = await c.req.json();
 
@@ -41,6 +44,9 @@ app.post("/register", async c => {
   return c.json(response)
 })
 
+/**
+ * Login with an existing user.
+ */
 app.post("/login", async c => {
   const { username, password } = await c.req.json();
 
@@ -56,6 +62,9 @@ app.post("/login", async c => {
   return c.text("Invalid Authentication", { status: 401 });
 })
 
+/**
+ * Create a new list.
+ */
 app.post('/users/:userId/lists', async c => {
   const { userId } = c.req.param();
   const { name, privacy } = await c.req.json();
@@ -87,6 +96,9 @@ app.post('/users/:userId/lists', async c => {
   return c.json(values, { status: 201 });
 })
 
+/**
+ * Get all lists.
+ */
 app.get('/users/:userId/lists', async c => {
   const { userId } = c.req.param();
 
@@ -99,10 +111,16 @@ app.get('/users/:userId/lists', async c => {
   return c.json(values.results)
 })
 
+/**
+ * Update a list.
+ */
 app.put('/users/:userId/lists/:listId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
+/**
+ * Delete a list.
+ */
 app.delete('/users/:userId/lists/:listId', async c => {
   const { listId, userId } = c.req.param();
 
@@ -117,14 +135,46 @@ app.delete('/users/:userId/lists/:listId', async c => {
   return new Response('ERROR', { status: 500 });
 })
 
-app.post('/lists/:listId/items', async c => {
-  // const responseBody = { id: 14 }
-  // return c.json(responseBody);
+/**
+ * Create a new note.
+ */
+app.post('/users/:userId/lists/:listId/notes', async c => {
+  const { userId, listId } = c.req.param();
+  const { title, content, privacy } = await c.req.json();
+
+  const info = await c.env.DB.prepare(
+    `INSERT INTO notes (title, content, privacy, list_id) VALUES(?1,?2,?3,?4)`
+  )
+    .bind(title, content, privacy, listId)
+    .run();
+  if (info.success) {
+    return new Response('OK', { status: 200 });
+  }
+  return new Response('ERROR', { status: 500 });
+})
+
+/**
+ * Update a note.
+ */
+app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
-app.put('/lists/:listId/items/:itemId', async c => {
-  return new Response('Not Implemented', { status: 501 });
+/**
+ * Delete a note.
+ */
+app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
+  const { listId, noteId } = c.req.param();
+
+  const info = await c.env.DB.prepare(
+    `DELETE FROM notes WHERE id = ?1 AND list_id = ?2`
+  )
+    .bind(noteId, listId)
+    .run();
+  if (info.success) {
+    return new Response('OK', { status: 200 });
+  }
+  return new Response('ERROR', { status: 500 });
 })
 
 app.all('*', () => new Response('Not Found', { status: 404 }))

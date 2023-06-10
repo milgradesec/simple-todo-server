@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS lists;
+DROP TABLE IF EXISTS notes;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
@@ -8,9 +9,16 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS lists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    privacy INTEGER,
-    user_id INTEGER,
+    privacy INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
-INSERT INTO users (username, password)
-VALUES ('admin@paesa.es', 'YTmFbcy94V3CFsGM');
+CREATE TABLE IF NOT EXISTS notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    privacy INTEGER NOT NULL,
+    list_id INTEGER NOT NULL,
+    FOREIGN KEY(list_id) REFERENCES lists(id)
+) -- INSERT INTO users (username, password)
+-- VALUES ('admin@paesa.es', 'YTmFbcy94V3CFsGM');
