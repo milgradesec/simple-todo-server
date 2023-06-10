@@ -1,14 +1,15 @@
 import { Hono } from 'hono'
 import { bearerAuth } from 'hono/bearer-auth'
+import { HTTPException } from 'hono/http-exception'
 
 const app = new Hono()
-
-const token = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb"
-app.use('/users/*', bearerAuth({ token }))
 
 app.get('/', async c => {
   return c.text('Serverless Todo API v1', { status: 200 });
 });
+
+const token = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb"
+app.use('/users/*', bearerAuth({ token }))
 
 /**
  * Register a new user.
@@ -47,7 +48,7 @@ app.post("/register", async c => {
 /**
  * Login with an existing user.
  */
-app.post("/login", async c => {
+app.post('/login', async c => {
   const { username, password } = await c.req.json();
 
   const values = await c.env.DB.prepare(
@@ -138,14 +139,14 @@ app.delete('/users/:userId/lists/:listId', async c => {
 /**
  * Create a new note.
  */
-app.post('/users/:userId/lists/:listId/notes', async c => {
-  const { userId, listId } = c.req.param();
+app.post('/users/:userId/notes', async c => {
+  const { userId } = c.req.param();
   const { title, content, privacy } = await c.req.json();
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO notes (title, content, privacy, list_id) VALUES(?1,?2,?3,?4)`
+    `INSERT INTO notes (title, content, privacy, user_id) VALUES(?1,?2,?3,?4)`
   )
-    .bind(title, content, privacy, listId)
+    .bind(title, content, privacy, userId)
     .run();
   if (info.success) {
     return new Response('OK', { status: 200 });
@@ -180,3 +181,36 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
 app.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default app
+
+// app.use("/users/*", async (c, next) => {
+//   const { userId } = c.req.param();
+//   const headerToken = c.req.headers.get('Authorization')
+
+//   if (!headerToken) {
+//     if (!headerToken || !headerToken.startsWith("Bearer ")) {
+//       throw new HTTPException(401)
+//     }
+//   }
+
+//   const values = await c.env.DB.prepare(
+//     `SELECT COUNT(*) AS count FROM auth_tokens WHERE user_id = ? LIMIT 1`
+//   )
+//     .bind(userId)
+//     .first();
+//   if (values.count == 0) {
+//     throw new HTTPException(401);
+//   }
+
+//   const values2 = await c.env.DB.prepare(
+//     `SELECT token FROM auth_tokens WHERE user_id = ? LIMIT 1`
+//   )
+//     .bind(userId)
+//     .first();
+
+//   const token = headerToken.split(' ')[1];
+//   if (values2.token != token) {
+//     throw new HTTPException(401);
+//   }
+
+//   await next()
+// })

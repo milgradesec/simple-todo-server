@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS auth_tokens(
-    token TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES users(id)
-);
+-- CREATE TABLE IF NOT EXISTS auth_tokens(
+--     token TEXT NOT NULL,
+--     user_id INTEGER NOT NULL,
+--     FOREIGN KEY(user_id) REFERENCES users(id)
+-- );
 CREATE TABLE IF NOT EXISTS lists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS notes (
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     privacy INTEGER NOT NULL,
-    list_id INTEGER NOT NULL,
-    FOREIGN KEY(list_id) REFERENCES lists(id)
-) -- INSERT INTO users (username, password)
--- VALUES ('admin@paesa.es', 'YTmFbcy94V3CFsGM');
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
