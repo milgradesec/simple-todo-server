@@ -51,50 +51,60 @@ app.post("/login", async c => {
   return c.text("Invalid Authentication", { status: 401 });
 })
 
-app.post('/lists', async c => {
-  const { name } = await c.req.json();
+app.post('/users/:userId/lists', async c => {
+  const { userId } = c.req.param();
+  const { name, privacy } = await c.req.json();
+
+  const count = await c.env.DB.prepare(
+    `SELECT COUNT(*) AS count FROM lists WHERE name = ?1 AND user_id = ?2`
+  )
+    .bind(name, userId)
+    .first();
+  if (count.count > 0) {
+    return c.text("List already exists", { status: 409 });
+  }
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO lists (name) VALUES(?)`
+    `INSERT INTO lists (name, privacy, user_id) VALUES(?1,?2,?3)`
   )
-    .bind(name)
+    .bind(name, privacy, userId)
     .run();
   if (!info.success) {
     return new Response('ERROR', { status: 500 });
   }
 
   const values = await c.env.DB.prepare(
-    `SELECT id FROM lists WHERE name = ? LIMIT 1`
+    `SELECT * FROM lists WHERE name = ?1 AND user_id = ?2`
   )
-    .bind(name)
+    .bind(name, userId)
     .first();
 
   return c.json(values, { status: 201 });
 })
 
-app.get('/lists/:listId', async c => {
-  const { listId } = c.req.param();
+app.get('/users/:userId/lists', async c => {
+  const { userId } = c.req.param();
 
   const values = await c.env.DB.prepare(
-    `SELECT * FROM lists WHERE id = ? LIMIT 1`
+    `SELECT * FROM lists WHERE user_id = ?1`
   )
-    .bind(listId)
-    .first();
+    .bind(userId)
+    .all();
 
-  return c.json(values)
+  return c.json(values.results)
 })
 
-app.put('/lists/:listId', async c => {
+app.put('/users/:userId/lists/:listId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
-app.delete('/lists/:listId', async c => {
-  const { listId } = c.req.param();
+app.delete('/users/:userId/lists/:listId', async c => {
+  const { listId, userId } = c.req.param();
 
   const info = await c.env.DB.prepare(
-    `DELETE FROM lists WHERE id = ?`
+    `DELETE FROM lists WHERE id = ?1 AND user_id = ?2`
   )
-    .bind(listId)
+    .bind(listId, userId)
     .run();
   if (info.success) {
     return new Response('OK', { status: 200 });
@@ -113,6 +123,6 @@ app.put('/lists/:listId/items/:itemId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
-app.all('*', () => new Response('Unauthorized', { status: 401 }))
+app.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default app

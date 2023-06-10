@@ -8,10 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS lists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    privacy INTEGER,
     user_id INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
 INSERT INTO users (username, password)
 VALUES ('admin@paesa.es', 'YTmFbcy94V3CFsGM');
-INSERT INTO lists(name, user_id)
-VALUES ('Compra', 1);
