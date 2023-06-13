@@ -1,6 +1,5 @@
-import { Hono } from 'hono'
-import { bearerAuth } from 'hono/bearer-auth'
-import { HTTPException } from 'hono/http-exception'
+import { Hono } from 'hono';
+import { bearerAuth } from 'hono/bearer-auth';
 
 const app = new Hono()
 
