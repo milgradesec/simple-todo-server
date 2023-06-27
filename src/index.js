@@ -138,19 +138,41 @@ app.delete('/users/:userId/lists/:listId', async c => {
 /**
  * Create a new note.
  */
-app.post('/users/:userId/notes', async c => {
-  const { userId } = c.req.param();
+app.post('/users/:userId/lists/:listId/notes', async c => {
+  const { userId, listId } = c.req.param();
   const { title, content, privacy } = await c.req.json();
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO notes (title, content, privacy, user_id) VALUES(?1,?2,?3,?4)`
+    `INSERT INTO notes (title, content, privacy, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
   )
-    .bind(title, content, privacy, userId)
+    .bind(title, content, privacy, userId, listId)
     .run();
-  if (info.success) {
-    return new Response('OK', { status: 200 });
+  if (!info.success) {
+    return new Response('ERROR', { status: 500 });
   }
-  return new Response('ERROR', { status: 500 });
+
+  const values = await c.env.DB.prepare(
+    `SELECT * FROM notes WHERE user_id = ?1 AND list_id = ?2`
+  )
+    .bind(userId, listId)
+    .all();
+
+  return c.json(values.results, { status: 201 });
+})
+
+/**
+ * Get all notes.
+ */
+app.get('/users/:userId/notes', async c => {
+  const { userId } = c.req.param();
+
+  const values = await c.env.DB.prepare(
+    `SELECT * FROM notes WHERE user_id = ?1`
+  )
+    .bind(userId)
+    .all();
+
+  return c.json(values.results)
 })
 
 /**
