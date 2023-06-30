@@ -152,12 +152,12 @@ app.post('/users/:userId/lists/:listId/notes', async c => {
   }
 
   const values = await c.env.DB.prepare(
-    `SELECT * FROM notes WHERE user_id = ?1 AND list_id = ?2`
+    `SELECT * FROM notes WHERE title = ?1 AND user_id = ?2 AND list_id = ?3`
   )
-    .bind(userId, listId)
-    .all();
+    .bind(title, userId, listId)
+    .first();
 
-  return c.json(values.results, { status: 201 });
+  return c.json(values, { status: 201 });
 })
 
 /**
@@ -202,36 +202,3 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
 app.all('*', () => new Response('Not Found', { status: 404 }))
 
 export default app
-
-// app.use("/users/*", async (c, next) => {
-//   const { userId } = c.req.param();
-//   const headerToken = c.req.headers.get('Authorization')
-
-//   if (!headerToken) {
-//     if (!headerToken || !headerToken.startsWith("Bearer ")) {
-//       throw new HTTPException(401)
-//     }
-//   }
-
-//   const values = await c.env.DB.prepare(
-//     `SELECT COUNT(*) AS count FROM auth_tokens WHERE user_id = ? LIMIT 1`
-//   )
-//     .bind(userId)
-//     .first();
-//   if (values.count == 0) {
-//     throw new HTTPException(401);
-//   }
-
-//   const values2 = await c.env.DB.prepare(
-//     `SELECT token FROM auth_tokens WHERE user_id = ? LIMIT 1`
-//   )
-//     .bind(userId)
-//     .first();
-
-//   const token = headerToken.split(' ')[1];
-//   if (values2.token != token) {
-//     throw new HTTPException(401);
-//   }
-
-//   await next()
-// })
