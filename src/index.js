@@ -63,6 +63,34 @@ app.post('/login', async c => {
 })
 
 /**
+ * Change password for user.
+ */
+app.post('/users/:userId/account/changePassword', async c => {
+  const { userId } = c.req.param();
+  const { password, new_password } = await c.req.json();
+
+  const values = await c.env.DB.prepare(
+    `SELECT id,password FROM users WHERE id = ?1 LIMIT 1`
+  )
+    .bind(userId)
+    .first();
+  if (values.password != password) {
+    return c.text("Invalid Authentication", { status: 401 });
+  }
+
+  const info = await c.env.DB.prepare(
+    `UPDATE users SET password = ?1 WHERE id = ?2`
+  )
+    .bind(new_password, userId)
+    .run();
+  if (!info.success) {
+    return c.text("Internal Server Error", { status: 500 });
+  }
+
+  return c.text("OK")
+})
+
+/**
  * Create list.
  */
 app.post('/users/:userId/lists', async c => {
@@ -204,12 +232,12 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
  */
 app.post('/users/:userId/tasks', async c => {
   const { userId } = c.req.param();
-  const { title, content, day, start_time, privacy, status } = await c.req.json();
+  const { title, content, start_time, privacy, status } = await c.req.json();
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO tasks (title, content, day, start_time, privacy, status, user_id) VALUES(?1,?2,?3,?4,?5,?6,?7)`
+    `INSERT INTO tasks (title, content, start_time, privacy, status, user_id) VALUES(?1,?2,?3,?4,?5,?6)`
   )
-    .bind(title, content, day, start_time, privacy, status, userId)
+    .bind(title, content, start_time, privacy, status, userId)
     .run();
   if (!info.success) {
     return new Response('ERROR', { status: 500 });
