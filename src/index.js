@@ -11,7 +11,7 @@ const token = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb"
 app.use('/users/*', bearerAuth({ token }))
 
 /**
- * Register a new user.
+ * Register user.
  */
 app.post("/register", async c => {
   const { username, password } = await c.req.json();
@@ -45,7 +45,7 @@ app.post("/register", async c => {
 })
 
 /**
- * Login with an existing user.
+ * Login.
  */
 app.post('/login', async c => {
   const { username, password } = await c.req.json();
@@ -63,7 +63,7 @@ app.post('/login', async c => {
 })
 
 /**
- * Create a new list.
+ * Create list.
  */
 app.post('/users/:userId/lists', async c => {
   const { userId } = c.req.param();
@@ -112,14 +112,14 @@ app.get('/users/:userId/lists', async c => {
 })
 
 /**
- * Update a list.
+ * Edit list.
  */
 app.put('/users/:userId/lists/:listId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
 /**
- * Delete a list.
+ * Delete list.
  */
 app.delete('/users/:userId/lists/:listId', async c => {
   const { listId, userId } = c.req.param();
@@ -136,7 +136,7 @@ app.delete('/users/:userId/lists/:listId', async c => {
 })
 
 /**
- * Create a new note.
+ * Create note.
  */
 app.post('/users/:userId/lists/:listId/notes', async c => {
   const { userId, listId } = c.req.param();
@@ -176,14 +176,14 @@ app.get('/users/:userId/notes', async c => {
 })
 
 /**
- * Update a note.
+ * Edit note.
  */
 app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
   return new Response('Not Implemented', { status: 501 });
 })
 
 /**
- * Delete a note.
+ * Delete note.
  */
 app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
   const { listId, noteId } = c.req.param();
@@ -192,6 +192,63 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
     `DELETE FROM notes WHERE id = ?1 AND list_id = ?2`
   )
     .bind(noteId, listId)
+    .run();
+  if (info.success) {
+    return new Response('OK', { status: 200 });
+  }
+  return new Response('ERROR', { status: 500 });
+})
+
+/**
+ * Create task.
+ */
+app.post('/users/:userId/tasks', async c => {
+  const { userId } = c.req.param();
+  const { title, content, day, start_time, privacy, status } = await c.req.json();
+
+  const info = await c.env.DB.prepare(
+    `INSERT INTO tasks (title, content, day, start_time, privacy, status, user_id) VALUES(?1,?2,?3,?4,?5,?6,?7)`
+  )
+    .bind(title, content, day, start_time, privacy, status, userId)
+    .run();
+  if (!info.success) {
+    return new Response('ERROR', { status: 500 });
+  }
+
+  const values = await c.env.DB.prepare(
+    `SELECT * FROM tasks WHERE title = ?1 AND user_id = ?2`
+  )
+    .bind(title, userId)
+    .first();
+
+  return c.json(values, { status: 201 });
+})
+
+/**
+ * Get all tasks.
+ */
+app.get('/users/:userId/tasks', async c => {
+  const { userId } = c.req.param();
+
+  const values = await c.env.DB.prepare(
+    `SELECT * FROM tasks WHERE user_id = ?1`
+  )
+    .bind(userId)
+    .all();
+
+  return c.json(values.results)
+})
+
+/**
+ * Delete task.
+ */
+app.delete('/users/:userId/tasks/:taskId', async c => {
+  const { userId, taskId } = c.req.param();
+
+  const info = await c.env.DB.prepare(
+    `DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`
+  )
+    .bind(taskId, userId)
     .run();
   if (info.success) {
     return new Response('OK', { status: 200 });

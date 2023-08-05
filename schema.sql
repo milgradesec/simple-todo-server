@@ -27,3 +27,14 @@ CREATE TABLE IF NOT EXISTS notes (
     user_id INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
+CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT,
+    day DATE NOT NULL DEFAULT (strftime('%Y-%m-%d', 'now')),
+    start_time DATETIME NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M', 'now')),
+    privacy INTEGER DEFAULT 1,
+    status TEXT DEFAULT 'SCHEDULED',
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
