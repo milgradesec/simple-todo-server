@@ -1,6 +1,6 @@
 name = "todo-api"
 main = "src/index.js"
-compatibility_date = "2023-05-12"
+compatibility_date = "2023-07-24"
 usage_model = "bundled"
 
 env = { }
