@@ -152,15 +152,27 @@ app.put('/users/:userId/lists/:listId', async c => {
 app.delete('/users/:userId/lists/:listId', async c => {
   const { listId, userId } = c.req.param();
 
-  const info = await c.env.DB.prepare(
-    `DELETE FROM lists WHERE id = ?1 AND user_id = ?2`
-  )
-    .bind(listId, userId)
-    .run();
-  if (info.success) {
-    return new Response('OK', { status: 200 });
+  const stmt = c.env.DB.prepare(`DELETE FROM lists WHERE id = ?1 AND user_id = ?2`);
+
+  try {
+    const { success } = await stmt.bind(listId, userId).run();
+    if (!success) {
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  } catch (e) {
+    return new Response('ERROR ==> ' + e, { status: 500 });
   }
-  return new Response('ERROR', { status: 500 });
+
+  return new Response('OK', { status: 200 });
+  // const info = await c.env.DB.prepare(
+  //   `DELETE FROM lists WHERE id = ?1 AND user_id = ?2`
+  // )
+  //   .bind(listId, userId)
+  //   .run();
+  // if (info.success) {
+  //   return new Response('OK', { status: 200 });
+  // }
+  // return new Response('ERROR', { status: 500 });
 })
 
 /**
@@ -215,16 +227,18 @@ app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
  */
 app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
   const { listId, noteId } = c.req.param();
+  const stmt = c.env.DB.prepare(`DELETE FROM notes WHERE id = ?1 AND list_id = ?2`);
 
-  const info = await c.env.DB.prepare(
-    `DELETE FROM notes WHERE id = ?1 AND list_id = ?2`
-  )
-    .bind(noteId, listId)
-    .run();
-  if (info.success) {
-    return new Response('OK', { status: 200 });
+  try {
+    const { success } = await stmt.bind(noteId, listId).run();
+    if (!success) {
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  } catch (e) {
+    return new Response('ERROR ==> ' + e, { status: 500 });
   }
-  return new Response('ERROR', { status: 500 });
+
+  return new Response('OK', { status: 200 });
 })
 
 /**
@@ -268,20 +282,38 @@ app.get('/users/:userId/tasks', async c => {
 })
 
 /**
+ * Edit task.
+ */
+app.put('/users/:userId/tasks/:taskId', async c => {
+  return new Response('Not Implemented', { status: 501 });
+})
+
+/**
  * Delete task.
  */
 app.delete('/users/:userId/tasks/:taskId', async c => {
   const { userId, taskId } = c.req.param();
+ 
+  try {
+    const stmt = c.env.DB.prepare(`DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`);
 
-  const info = await c.env.DB.prepare(
-    `DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`
-  )
-    .bind(taskId, userId)
-    .run();
-  if (info.success) {
-    return new Response('OK', { status: 200 });
+    const { success } = await stmt.bind(taskId, userId).run();
+    if (!success) {
+      return new Response('ERROR', { status: 500 });
+    }
+  } catch (e) {
+    return new Response('ERROR ==> ' + e, { status: 500 });
   }
-  return new Response('ERROR', { status: 500 });
+
+  // const info = await c.env.DB.prepare(
+  //   `DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`
+  // )
+  //   .bind(taskId, userId)
+  //   .run();
+  // if (info.success) {
+  //   return new Response('OK', { status: 200 });
+  // }
+  // return new Response('ERROR', { status: 500 });
 })
 
 app.all('*', () => new Response('Not Found', { status: 404 }))
