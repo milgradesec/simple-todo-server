@@ -180,12 +180,12 @@ app.delete('/users/:userId/lists/:listId', async c => {
  */
 app.post('/users/:userId/lists/:listId/notes', async c => {
   const { userId, listId } = c.req.param();
-  const { title, content, privacy } = await c.req.json();
+  const { title, content, status } = await c.req.json();
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO notes (title, content, privacy, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
+    `INSERT INTO notes (title, content, status, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
   )
-    .bind(title, content, privacy, userId, listId)
+    .bind(title, content, status, userId, listId)
     .run();
   if (!info.success) {
     return new Response('ERROR', { status: 500 });
@@ -232,7 +232,7 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
   try {
     const { success } = await stmt.bind(noteId, listId).run();
     if (!success) {
-      return new Response('Internal Server Error', { status: 500 });
+      return new Response('ERROR', { status: 500 });
     }
   } catch (e) {
     return new Response('ERROR ==> ' + e, { status: 500 });
@@ -293,27 +293,18 @@ app.put('/users/:userId/tasks/:taskId', async c => {
  */
 app.delete('/users/:userId/tasks/:taskId', async c => {
   const { userId, taskId } = c.req.param();
- 
+
   try {
     const stmt = c.env.DB.prepare(`DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`);
-
-    const { success } = await stmt.bind(taskId, userId).run();
-    if (!success) {
-      return new Response('ERROR', { status: 500 });
+    const info = await stmt.bind(taskId, userId).run();
+    if (!info.success) {
+      c.text('Unknown error', { status: 500 });
     }
-  } catch (e) {
-    return new Response('ERROR ==> ' + e, { status: 500 });
+  } catch (error) {
+    c.text(error, { status: 500 });
   }
 
-  // const info = await c.env.DB.prepare(
-  //   `DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`
-  // )
-  //   .bind(taskId, userId)
-  //   .run();
-  // if (info.success) {
-  //   return new Response('OK', { status: 200 });
-  // }
-  // return new Response('ERROR', { status: 500 });
+  c.text('OK', { status: 200 });
 })
 
 app.all('*', () => new Response('Not Found', { status: 404 }))
