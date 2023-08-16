@@ -246,12 +246,12 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
  */
 app.post('/users/:userId/tasks', async c => {
   const { userId } = c.req.param();
-  const { title, content, start_time, privacy, status } = await c.req.json();
+  const { title, content, start_time } = await c.req.json();
 
   const info = await c.env.DB.prepare(
-    `INSERT INTO tasks (title, content, start_time, privacy, status, user_id) VALUES(?1,?2,?3,?4,?5,?6)`
+    `INSERT INTO tasks (title, content, start_time, user_id) VALUES(?1,?2,?3,?4)`
   )
-    .bind(title, content, start_time, privacy, status, userId)
+    .bind(title, content, start_time, userId)
     .run();
   if (!info.success) {
     return new Response('ERROR', { status: 500 });
@@ -293,18 +293,18 @@ app.put('/users/:userId/tasks/:taskId', async c => {
  */
 app.delete('/users/:userId/tasks/:taskId', async c => {
   const { userId, taskId } = c.req.param();
+  const stmt = c.env.DB.prepare(`DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`);
 
   try {
-    const stmt = c.env.DB.prepare(`DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`);
     const info = await stmt.bind(taskId, userId).run();
     if (!info.success) {
-      c.text('Unknown error', { status: 500 });
+      return c.text('Unknown error', { status: 500 });
     }
   } catch (error) {
-    c.text(error, { status: 500 });
+    return c.text(error, { status: 500 });
   }
 
-  c.text('OK', { status: 200 });
+  return c.text('OK', { status: 200 });
 })
 
 app.all('*', () => new Response('Not Found', { status: 404 }))
