@@ -1,16 +1,16 @@
 {
   "name": "todo-api",
   "version": "0.0.1",
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230821.0",
-    "typescript": "^5.2.2"
-  },
   "private": true,
   "scripts": {
-    "start": "wrangler dev",
+    "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
     "hono": "^3.5.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230821.0",
+    "typescript": "^5.2.2"
   }
 }
