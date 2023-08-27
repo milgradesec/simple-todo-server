@@ -46,7 +46,7 @@ app.post("/register", async c => {
     if (row == null) {
         return
     }
-    return c.json({ id: row.id, token: token });
+    return c.json({ id: row.id, token: token }, 200);
 });
 
 /**
@@ -55,13 +55,13 @@ app.post("/register", async c => {
 app.post("/login", async (c) => {
     const { username, password } = await c.req.json();
 
-    const values = await c.env.DB.prepare(
+    const row = await c.env.DB.prepare(
         `SELECT id,password FROM users WHERE username = ? LIMIT 1`
     )
         .bind(username)
         .first();
-    if (values != null && values.password == password) {
-        return c.json({ id: values.id, token: token });
+    if (row != null && row.password == password) {
+        return c.json({ id: row.id, token: token });
     }
     return c.json({ err: "Invalid authentication" }, 401);
 });
@@ -73,24 +73,24 @@ app.post("/users/:userId/account/changePassword", async c => {
     const { userId } = c.req.param();
     const { password, new_password } = await c.req.json();
 
-    const values = await c.env.DB.prepare(
+    const row = await c.env.DB.prepare(
         `SELECT id,password FROM users WHERE id = ?1 LIMIT 1`
     )
         .bind(userId)
         .first();
-    if (values != null && values.password != password) {
+    if (row != null && row.password != password) {
         return c.json({ err: "Invalid authentication" }, 401);
     }
 
-    const info = await c.env.DB.prepare(
+    const result = await c.env.DB.prepare(
         `UPDATE users SET password = ?1 WHERE id = ?2`
     )
         .bind(new_password, userId)
         .run();
-    if (!info.success) {
+    if (!result.success) {
         return c.json({ error: "Failed to write to the database" }, 500);
     }
-    return c.text("OK")
+    return c.text("OK", 200);
 });
 
 /**
@@ -100,30 +100,30 @@ app.post("/users/:userId/lists", async c => {
     const { userId } = c.req.param();
     const { name, privacy } = await c.req.json();
 
-    const count = await c.env.DB.prepare(
+    const rowCount = await c.env.DB.prepare(
         `SELECT COUNT(*) AS count FROM lists WHERE name = ?1 AND user_id = ?2`
     )
         .bind(name, userId)
         .first("count");
-    if (count != null && count != 0) {
+    if (rowCount != null && rowCount != 0) {
         return c.json({ error: "List already exists" }, 409);
     }
 
-    const info = await c.env.DB.prepare(
+    const result = await c.env.DB.prepare(
         `INSERT INTO lists (name, privacy, user_id) VALUES(?1,?2,?3)`
     )
         .bind(name, privacy, userId)
         .run();
-    if (!info.success) {
+    if (!result.success) {
         return c.json({ error: "Failed to write to the database" }, 500);
     }
 
-    const values = await c.env.DB.prepare(
+    const row = await c.env.DB.prepare(
         `SELECT * FROM lists WHERE name = ?1 AND user_id = ?2 LIMIT 1`
     )
         .bind(name, userId)
         .first();
-    return c.json(values, 201);
+    return c.json(row, 201);
 });
 
 /**
@@ -132,20 +132,19 @@ app.post("/users/:userId/lists", async c => {
 app.get('/users/:userId/lists', async c => {
     const { userId } = c.req.param();
 
-    const values = await c.env.DB.prepare(
+    const rows = await c.env.DB.prepare(
         `SELECT * FROM lists WHERE user_id = ?1`
     )
         .bind(userId)
         .all();
-
-    return c.json(values.results)
+    return c.json(rows.results);
 });
 
 /**
  * Edit list.
  */
 app.put('/users/:userId/lists/:listId', async c => {
-    return new Response('Not Implemented', { status: 501 });
+    return c.json({ err: "Not Implemented" }, 501);
 });
 
 /**
@@ -154,13 +153,16 @@ app.put('/users/:userId/lists/:listId', async c => {
 app.delete('/users/:userId/lists/:listId', async c => {
     const { listId, userId } = c.req.param();
 
-    const info = await c.env.DB.prepare(
+    const result = await c.env.DB.prepare(
         `DELETE FROM lists WHERE id = ?1 AND user_id = ?2`
     )
         .bind(listId, userId)
         .run();
-    if (!info.success) {
+    if (!result.success) {
         return new Response('ERROR', { status: 500 });
+    }
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "List not found" }, 404);
     }
     return new Response('OK', { status: 200 });
 });
@@ -172,22 +174,21 @@ app.post('/users/:userId/lists/:listId/notes', async c => {
     const { userId, listId } = c.req.param();
     const { title, content, status } = await c.req.json();
 
-    const info = await c.env.DB.prepare(
+    const result = await c.env.DB.prepare(
         `INSERT INTO notes (title, content, status, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
     )
         .bind(title, content, status, userId, listId)
         .run();
-    if (!info.success) {
+    if (!result.success) {
         return new Response('ERROR', { status: 500 });
     }
 
-    const values = await c.env.DB.prepare(
+    const row = await c.env.DB.prepare(
         `SELECT * FROM notes WHERE title = ?1 AND user_id = ?2 AND list_id = ?3`
     )
         .bind(title, userId, listId)
         .first();
-
-    return c.json(values, { status: 201 });
+    return c.json(row, 201);
 });
 
 /**
@@ -196,19 +197,19 @@ app.post('/users/:userId/lists/:listId/notes', async c => {
 app.get('/users/:userId/notes', async c => {
     const { userId } = c.req.param();
 
-    const values = await c.env.DB.prepare(
+    const rows = await c.env.DB.prepare(
         `SELECT * FROM notes WHERE user_id = ?1`
     )
         .bind(userId)
         .all();
-    return c.json(values.results)
+    return c.json(rows.results);
 });
 
 /**
  * Edit note.
  */
 app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
-    return new Response('Not Implemented', { status: 501 });
+    return c.json({ err: "Not Implemented" }, 501);
 });
 
 /**
@@ -217,13 +218,16 @@ app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
 app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
     const { listId, noteId } = c.req.param();
 
-    const { success } = await c.env.DB.prepare(
+    const result = await c.env.DB.prepare(
         `DELETE FROM notes WHERE id = ?1 AND list_id = ?2`
     )
         .bind(noteId, listId)
         .run();
-    if (!success) {
+    if (!result.success) {
         return new Response('ERROR', { status: 500 });
+    }
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "Note not found" }, 404);
     }
     return new Response('OK', { status: 200 });
 });
@@ -249,7 +253,6 @@ app.post('/users/:userId/tasks', async c => {
     )
         .bind(title, userId)
         .first();
-
     return c.json(values, { status: 201 });
 });
 
@@ -259,34 +262,39 @@ app.post('/users/:userId/tasks', async c => {
 app.get('/users/:userId/tasks', async c => {
     const { userId } = c.req.param();
 
-    const values = await c.env.DB.prepare(
+    const rows = await c.env.DB.prepare(
         `SELECT * FROM tasks WHERE user_id = ?1`
     )
         .bind(userId)
         .all();
-
-    return c.json(values.results)
+    return c.json(rows.results);
 });
 
 /**
  * Edit task.
  */
-app.put('/users/:userId/tasks/:taskId', async c => {
-    return new Response('Not Implemented', { status: 501 });
+app.put("/users/:userId/tasks/:taskId", async c => {
+    return c.json({ err: "Not Implemented" }, 501);
 });
 
 /**
  * Delete task.
  */
-app.delete('/users/:userId/tasks/:taskId', async c => {
+app.delete("/users/:userId/tasks/:taskId", async c => {
     const { userId, taskId } = c.req.param();
 
-    const stmt = c.env.DB.prepare(`DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`);
-    const info = await stmt.bind(taskId, userId).run();
-    if (!info.success) {
-        return c.text('Unknown error', { status: 500 });
+    const result = await c.env.DB.prepare(
+        `DELETE FROM tasks WHERE id = ?1 AND user_id = ?2`
+    )
+        .bind(taskId, userId)
+        .run();
+    if (!result.success) {
+        return c.text('Unknown error', 500);
     }
-    return c.text('OK', { status: 200 });
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "Task not found" }, 404);
+    }
+    return c.text('OK', 200);
 });
 
 /**
