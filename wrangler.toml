@@ -1,5 +1,5 @@
 name = "todo-api"
-main = "src/index.js"
+main = "src/index.ts"
 compatibility_date = "2023-07-24"
 usage_model = "bundled"
 
