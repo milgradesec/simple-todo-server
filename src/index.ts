@@ -74,7 +74,7 @@ app.post("/users/:userId/account/changePassword", async c => {
     const { password, new_password } = await c.req.json();
 
     const row = await c.env.DB.prepare(
-        `SELECT id,password FROM users WHERE id = ?1 LIMIT 1`
+        `SELECT id, password FROM users WHERE id = ?1 LIMIT 1`
     )
         .bind(userId)
         .first();
@@ -144,7 +144,21 @@ app.get('/users/:userId/lists', async c => {
  * Edit list.
  */
 app.put('/users/:userId/lists/:listId', async c => {
-    return c.json({ err: "Not Implemented" }, 501);
+    const { userId, listId } = c.req.param();
+    const { name, privacy } = await c.req.json();
+
+    const result = await c.env.DB.prepare(
+        `UPDATE lists SET name = ?1, privacy = ?2 WHERE id = ?3 AND user_id = ?4`
+    )
+        .bind(name, privacy, listId, userId)
+        .run();
+    if (!result.success) {
+        return c.json({ error: "Failed to write to the database" }, 500);
+    }
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "List not found" }, 404);
+    }
+    return c.text("OK", 200);
 });
 
 /**
@@ -171,22 +185,22 @@ app.delete('/users/:userId/lists/:listId', async c => {
  * Create note.
  */
 app.post('/users/:userId/lists/:listId/notes', async c => {
-    const { userId, listId } = c.req.param();
-    const { title, content, status } = await c.req.json();
+    const { userId } = c.req.param();
+    const { title, content } = await c.req.json();
 
     const result = await c.env.DB.prepare(
-        `INSERT INTO notes (title, content, status, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
+        `INSERT INTO notes (title, content, user_id) VALUES(?1,?2,?3)`
     )
-        .bind(title, content, status, userId, listId)
+        .bind(title, content, userId)
         .run();
     if (!result.success) {
         return new Response('ERROR', { status: 500 });
     }
 
     const row = await c.env.DB.prepare(
-        `SELECT * FROM notes WHERE title = ?1 AND user_id = ?2 AND list_id = ?3`
+        `SELECT * FROM notes WHERE title = ?1 AND user_id = ?2`
     )
-        .bind(title, userId, listId)
+        .bind(title, userId)
         .first();
     return c.json(row, 201);
 });
@@ -208,8 +222,22 @@ app.get('/users/:userId/notes', async c => {
 /**
  * Edit note.
  */
-app.put('/users/:userId/lists/:listId/items/:itemId', async c => {
-    return c.json({ err: "Not Implemented" }, 501);
+app.put('/users/:userId/lists/:listId/notes/:noteId', async c => {
+    const { userId, noteId } = c.req.param();
+    const { title, content } = await c.req.json();
+
+    const result = await c.env.DB.prepare(
+        `UPDATE notes SET title = ?1, content = ?2 WHERE id = ?3 AND user_id = ?4`
+    )
+        .bind(title, content, noteId, userId)
+        .run();
+    if (!result.success) {
+        return c.json({ error: "Failed to write to the database" }, 500);
+    }
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "List not found" }, 404);
+    }
+    return c.text("OK", 200);
 });
 
 /**
@@ -274,7 +302,21 @@ app.get('/users/:userId/tasks', async c => {
  * Edit task.
  */
 app.put("/users/:userId/tasks/:taskId", async c => {
-    return c.json({ err: "Not Implemented" }, 501);
+    const { userId, taskId } = c.req.param();
+    const { title, content } = await c.req.json();
+
+    const result = await c.env.DB.prepare(
+        `UPDATE tasks SET title = ?1, content = ?2 WHERE id = ?3 AND user_id = ?4`
+    )
+        .bind(title, content, taskId, userId)
+        .run();
+    if (!result.success) {
+        return c.json({ error: "Failed to write to the database" }, 500);
+    }
+    if (result.meta.rows_written == 0) {
+        return c.json({ err: "Task not found" }, 404);
+    }
+    return c.text("OK", 200);
 });
 
 /**
