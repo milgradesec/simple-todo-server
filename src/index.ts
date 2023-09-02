@@ -35,7 +35,7 @@ app.post("/register", async c => {
         .bind(username, password)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
 
     const row = await c.env.DB.prepare(
@@ -44,7 +44,7 @@ app.post("/register", async c => {
         .bind(username)
         .first();
     if (row == null) {
-        return
+        return c.json({ error: "Unkown database error" }, 500);
     }
     return c.json({ id: row.id, token: token }, 200);
 });
@@ -63,7 +63,7 @@ app.post("/login", async (c) => {
     if (row != null && row.password == password) {
         return c.json({ id: row.id, token: token });
     }
-    return c.json({ err: "Invalid authentication" }, 401);
+    return c.json({ error: "Invalid authentication" }, 401);
 });
 
 /**
@@ -79,7 +79,7 @@ app.post("/users/:userId/account/changePassword", async c => {
         .bind(userId)
         .first();
     if (row != null && row.password != password) {
-        return c.json({ err: "Invalid authentication" }, 401);
+        return c.json({ error: "Invalid authentication" }, 401);
     }
 
     const result = await c.env.DB.prepare(
@@ -88,7 +88,7 @@ app.post("/users/:userId/account/changePassword", async c => {
         .bind(new_password, userId)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
     return c.text("OK", 200);
 });
@@ -115,7 +115,7 @@ app.post("/users/:userId/lists", async c => {
         .bind(name, privacy, userId)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
 
     const row = await c.env.DB.prepare(
@@ -153,10 +153,10 @@ app.put('/users/:userId/lists/:listId', async c => {
         .bind(name, privacy, listId, userId)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "List not found" }, 404);
+        return c.json({ error: "List not found" }, 404);
     }
     return c.text("OK", 200);
 });
@@ -173,10 +173,10 @@ app.delete('/users/:userId/lists/:listId', async c => {
         .bind(listId, userId)
         .run();
     if (!result.success) {
-        return new Response('ERROR', { status: 500 });
+        return c.json({ error: "Unkown database error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "List not found" }, 404);
+        return c.json({ error: "List not found" }, 404);
     }
     return new Response('OK', { status: 200 });
 });
@@ -194,7 +194,7 @@ app.post('/users/:userId/lists/:listId/notes', async c => {
         .bind(title, content, userId)
         .run();
     if (!result.success) {
-        return new Response('ERROR', { status: 500 });
+        return c.json({ error: "Unkown database error" }, 500);
     }
 
     const row = await c.env.DB.prepare(
@@ -232,10 +232,10 @@ app.put('/users/:userId/lists/:listId/notes/:noteId', async c => {
         .bind(title, content, noteId, userId)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "List not found" }, 404);
+        return c.json({ error: "List not found" }, 404);
     }
     return c.text("OK", 200);
 });
@@ -252,10 +252,10 @@ app.delete('/users/:userId/lists/:listId/notes/:noteId', async c => {
         .bind(noteId, listId)
         .run();
     if (!result.success) {
-        return new Response('ERROR', { status: 500 });
+        return c.json({ error: "Unkown database error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "Note not found" }, 404);
+        return c.json({ error: "Note not found" }, 404);
     }
     return new Response('OK', { status: 200 });
 });
@@ -273,7 +273,7 @@ app.post('/users/:userId/tasks', async c => {
         .bind(title, content, start_time, userId)
         .run();
     if (!info.success) {
-        return new Response('ERROR', { status: 500 });
+        return c.json({ error: "Unkown database error" }, 500);
     }
 
     const values = await c.env.DB.prepare(
@@ -311,10 +311,10 @@ app.put("/users/:userId/tasks/:taskId", async c => {
         .bind(title, content, taskId, userId)
         .run();
     if (!result.success) {
-        return c.json({ error: "Failed to write to the database" }, 500);
+        return c.json({ error: "Unkown database error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "Task not found" }, 404);
+        return c.json({ error: "Task not found" }, 404);
     }
     return c.text("OK", 200);
 });
@@ -331,10 +331,10 @@ app.delete("/users/:userId/tasks/:taskId", async c => {
         .bind(taskId, userId)
         .run();
     if (!result.success) {
-        return c.text('Unknown error', 500);
+        return c.json({ error: "Unknown error" }, 500);
     }
     if (result.meta.rows_written == 0) {
-        return c.json({ err: "Task not found" }, 404);
+        return c.json({ error: "Task not found" }, 404);
     }
     return c.text('OK', 200);
 });
