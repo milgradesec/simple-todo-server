@@ -1,24 +1,24 @@
-import { HTTPException } from 'hono/http-exception';
 import type { MiddlewareHandler } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 
 const TOKEN_STRINGS = '[A-Za-z0-9._~+/-]+=*';
 const PREFIX = 'Bearer';
 const TOKEN = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb";
 
-export const BearerAuthentication = (options: {
-    token: string
-    realm?: string
-    prefix?: string
-    hashFunction?: Function
-}): MiddlewareHandler => {
+export function BearerAuthentication(options: {
+    token: string;
+    realm?: string;
+    prefix?: string;
+    hashFunction?: Function;
+}): MiddlewareHandler {
     if (!options.token) {
         throw new Error("bearer auth middleware requires options for \"token\"");
     }
     if (!options.realm) {
-        options.realm = ''
+        options.realm = '';
     }
     if (!options.prefix) {
-        options.prefix = PREFIX
+        options.prefix = PREFIX;
     }
     const realm = options.realm?.replace(/"/g, '\\"');
 
@@ -35,8 +35,8 @@ export const BearerAuthentication = (options: {
             throw new HTTPException(401, { res });
         }
 
-        const regexp = new RegExp('^' + options.prefix + ' +(' + TOKEN_STRINGS + ') *$')
-        const match = regexp.exec(headerToken)
+        const regexp = new RegExp('^' + options.prefix + ' +(' + TOKEN_STRINGS + ') *$');
+        const match = regexp.exec(headerToken);
         if (!match) {
             // Invalid Request
             const res = new Response('Bad Request', {
@@ -59,5 +59,5 @@ export const BearerAuthentication = (options: {
             throw new HTTPException(401, { res });
         }
         await next();
-    }
+    };
 }

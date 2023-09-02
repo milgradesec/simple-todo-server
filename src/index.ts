@@ -1,10 +1,9 @@
 import { Hono } from 'hono';
-import { BearerAuthentication } from './auth';
-
 import * as Account from './api/account';
 import * as Lists from './api/lists';
 import * as Notes from './api/notes';
 import * as Tasks from './api/tasks';
+import { BearerAuthentication } from './auth';
 
 type Bindings = {
     DB: D1Database
