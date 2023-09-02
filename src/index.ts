@@ -40,91 +40,91 @@ app.use("/users/*", BearerAuthentication({ token: TOKEN }));
  * Change password.
  */
 app.post("/users/:userId/account/changePassword", async (c) => {
-    return Account.passwordChangeHandler(c);
+    return Account.changePasswordHandler(c);
 });
 
 /**
  * Create list.
  */
 app.post("/users/:userId/lists", async (c) => {
-    return Lists.createListHandler(c);
+    return Lists.createHandler(c);
 });
 
 /**
  * Get all lists.
  */
 app.get('/users/:userId/lists', async (c) => {
-    return Lists.getListsHandler(c);
+    return Lists.getAllHandler(c);
 });
 
 /**
  * Edit list.
  */
 app.put('/users/:userId/lists/:listId', async (c) => {
-    return Lists.editListHandler(c);
+    return Lists.editHandler(c);
 });
 
 /**
  * Delete list.
  */
 app.delete('/users/:userId/lists/:listId', async (c) => {
-    return Lists.deleteListHandler(c);
+    return Lists.deleteHandler(c);
 });
 
 /**
  * Create note.
  */
 app.post('/users/:userId/lists/:listId/notes', async c => {
-    return Notes.createNoteHandler(c);
+    return Notes.createHandler(c);
 });
 
 /**
  * Get all notes.
  */
 app.get('/users/:userId/notes', async (c) => {
-    return Notes.getNotesHandler(c);
+    return Notes.getAllHandler(c);
 });
 
 /**
  * Edit note.
  */
 app.put('/users/:userId/lists/:listId/notes/:noteId', async (c) => {
-    return Notes.editNoteHandler(c);
+    return Notes.editHandler(c);
 });
 
 /**
  * Delete note.
  */
 app.delete('/users/:userId/lists/:listId/notes/:noteId', async (c) => {
-    return Notes.deleteNoteHandler(c);
+    return Notes.deleteHandler(c);
 });
 
 /**
  * Create task.
  */
 app.post('/users/:userId/tasks', async (c) => {
-    return Tasks.createTaskHandler(c);
+    return Tasks.createHandler(c);
 });
 
 /**
  * Get all tasks.
  */
 app.get('/users/:userId/tasks', async (c) => {
-    return Tasks.getTasksHandler(c);
+    return Tasks.getAllHandler(c);
 });
 
 /**
  * Edit task.
  */
 app.put("/users/:userId/tasks/:taskId", async (c) => {
-    return Tasks.editTaskHandler(c);
+    return Tasks.editHandler(c);
 });
 
 /**
  * Delete task.
  */
 app.delete("/users/:userId/tasks/:taskId", async (c) => {
-    return Tasks.deleteTaskHandler(c);
+    return Tasks.deleteHandler(c);
 });
 
 /**

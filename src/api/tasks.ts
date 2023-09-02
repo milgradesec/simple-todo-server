@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-export async function createTaskHandler(c: Context): Promise<Response> {
+export async function createHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
     const { title, content, start_time } = await c.req.json();
 
@@ -21,7 +21,7 @@ export async function createTaskHandler(c: Context): Promise<Response> {
     return c.json(values, { status: 201 });
 }
 
-export async function getTasksHandler(c: Context): Promise<Response> {
+export async function getAllHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
 
     const rows = await c.env.DB.prepare(
@@ -32,7 +32,7 @@ export async function getTasksHandler(c: Context): Promise<Response> {
     return c.json(rows.results);
 }
 
-export async function editTaskHandler(c: Context): Promise<Response> {
+export async function editHandler(c: Context): Promise<Response> {
     const { userId, taskId } = c.req.param();
     const { title, content } = await c.req.json();
 
@@ -50,7 +50,7 @@ export async function editTaskHandler(c: Context): Promise<Response> {
     return c.text("OK", 200);
 }
 
-export async function deleteTaskHandler(c: Context): Promise<Response> {
+export async function deleteHandler(c: Context): Promise<Response> {
     const { userId, taskId } = c.req.param();
 
     const result = await c.env.DB.prepare(

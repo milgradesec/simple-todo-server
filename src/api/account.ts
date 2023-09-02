@@ -48,7 +48,7 @@ export async function loginHandler(c: Context): Promise<Response> {
     return c.json({ error: "Invalid authentication" }, 401);
 }
 
-export async function passwordChangeHandler(c: Context): Promise<Response> {
+export async function changePasswordHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
     const { password, new_password } = await c.req.json();
 

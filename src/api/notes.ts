@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-export async function createNoteHandler(c: Context): Promise<Response> {
+export async function createHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
     const { title, content } = await c.req.json();
 
@@ -21,7 +21,7 @@ export async function createNoteHandler(c: Context): Promise<Response> {
     return c.json(row, 201);
 }
 
-export async function getNotesHandler(c: Context): Promise<Response> {
+export async function getAllHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
 
     const rows = await c.env.DB.prepare(
@@ -32,7 +32,7 @@ export async function getNotesHandler(c: Context): Promise<Response> {
     return c.json(rows.results);
 }
 
-export async function editNoteHandler(c: Context): Promise<Response> {
+export async function editHandler(c: Context): Promise<Response> {
     const { userId, noteId } = c.req.param();
     const { title, content } = await c.req.json();
 
@@ -50,7 +50,7 @@ export async function editNoteHandler(c: Context): Promise<Response> {
     return c.text("OK", 200);
 }
 
-export async function deleteNoteHandler(c: Context): Promise<Response> {
+export async function deleteHandler(c: Context): Promise<Response> {
     const { listId, noteId } = c.req.param();
 
     const result = await c.env.DB.prepare(

@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-export async function createListHandler(c: Context): Promise<Response> {
+export async function createHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
     const { name, privacy } = await c.req.json();
 
@@ -30,7 +30,7 @@ export async function createListHandler(c: Context): Promise<Response> {
     return c.json(row, 201);
 }
 
-export async function getListsHandler(c: Context): Promise<Response> {
+export async function getAllHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
 
     const rows = await c.env.DB.prepare(
@@ -41,7 +41,7 @@ export async function getListsHandler(c: Context): Promise<Response> {
     return c.json(rows.results);
 }
 
-export async function editListHandler(c: Context): Promise<Response> {
+export async function editHandler(c: Context): Promise<Response> {
     const { userId, listId } = c.req.param();
     const { name, privacy } = await c.req.json();
 
@@ -59,7 +59,7 @@ export async function editListHandler(c: Context): Promise<Response> {
     return c.text("OK", 200);
 }
 
-export async function deleteListHandler(c: Context): Promise<Response> {
+export async function deleteHandler(c: Context): Promise<Response> {
     const { listId, userId } = c.req.param();
 
     const result = await c.env.DB.prepare(
