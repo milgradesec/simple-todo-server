@@ -3,7 +3,7 @@ import * as Account from './api/account';
 import * as Lists from './api/lists';
 import * as Notes from './api/notes';
 import * as Tasks from './api/tasks';
-import { bearerAuth } from 'hono/bearer-auth'
+import { BearerAuthentication } from './auth';
 
 type Bindings = {
     DB: D1Database
@@ -34,7 +34,7 @@ app.post("/login", async (c) => {
 /**
  * Authentication middleware.
  */
-app.use("/users/*", bearerAuth({ token: TOKEN }));
+app.use("/users/*", BearerAuthentication({ token: TOKEN }));
 
 /**
  * Change password.
