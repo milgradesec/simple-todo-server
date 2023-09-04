@@ -2,12 +2,12 @@ import { Context } from "hono";
 
 export async function createHandler(c: Context): Promise<Response> {
     const { userId } = c.req.param();
-    const { title, content } = await c.req.json();
+    const { title, content, status } = await c.req.json();
 
     const result = await c.env.DB.prepare(
-        `INSERT INTO notes (title, content, user_id) VALUES(?1,?2,?3)`
+        `INSERT INTO notes (title, content, status, user_id) VALUES(?1,?2,?3,?4)`
     )
-        .bind(title, content, userId)
+        .bind(title, content, status, userId)
         .run();
     if (!result.success) {
         return c.json({ error: "Unkown database error" }, 500);
@@ -51,12 +51,12 @@ export async function editHandler(c: Context): Promise<Response> {
 }
 
 export async function deleteHandler(c: Context): Promise<Response> {
-    const { listId, noteId } = c.req.param();
+    const { noteId, userId } = c.req.param();
 
     const result = await c.env.DB.prepare(
-        `DELETE FROM notes WHERE id = ?1 AND list_id = ?2`
+        `DELETE FROM notes WHERE id = ?1 AND user_id = ?2`
     )
-        .bind(noteId, listId)
+        .bind(noteId, userId)
         .run();
     if (!result.success) {
         return c.json({ error: "Unkown database error" }, 500);

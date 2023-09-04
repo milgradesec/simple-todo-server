@@ -13,7 +13,7 @@ const TOKEN = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.get("/", async c => {
+app.get("/", async (c) => {
     return c.text('Serverless Todo API v1', 200);
 });
 
@@ -74,7 +74,7 @@ app.delete('/users/:userId/lists/:listId', async (c) => {
 /**
  * Create note.
  */
-app.post('/users/:userId/lists/:listId/notes', async c => {
+app.post('/users/:userId/lists/:listId/notes', async (c) => {
     return Notes.createHandler(c);
 });
 
