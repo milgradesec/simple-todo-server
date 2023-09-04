@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-const TOKEN = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb";
+const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImRlZmF1bHQiLCJ1c2VySWQiOjB9.tkgKzEdeIC14dpfQTv9AsaTHFyefrmHaVVXiJQ9MA24";
 
 export async function registerHandler(c: Context): Promise<Response> {
     const { username, password } = await c.req.json();

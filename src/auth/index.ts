@@ -3,13 +3,12 @@ import { HTTPException } from 'hono/http-exception';
 
 const TOKEN_STRINGS = '[A-Za-z0-9._~+/-]+=*';
 const PREFIX = 'Bearer';
-const TOKEN = "w9Z8RLiftZztnd2ygnt5SRHpcaahL3zPBFLS7MTJYb";
+const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImRlZmF1bHQiLCJ1c2VySWQiOjB9.tkgKzEdeIC14dpfQTv9AsaTHFyefrmHaVVXiJQ9MA24";
 
 export function BearerAuthentication(options: {
     token: string;
     realm?: string;
     prefix?: string;
-    hashFunction?: Function;
 }): MiddlewareHandler {
     if (!options.token) {
         throw new Error("bearer auth middleware requires options for \"token\"");
