@@ -7,11 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL
 );
--- CREATE TABLE IF NOT EXISTS auth_tokens(
---     token TEXT NOT NULL,
---     user_id INTEGER NOT NULL,
---     FOREIGN KEY(user_id) REFERENCES users(id)
--- );
 CREATE TABLE IF NOT EXISTS lists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,

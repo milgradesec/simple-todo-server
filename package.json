@@ -7,10 +7,12 @@
     "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "hono": "^3.5.7"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230904.0",
+    "@types/bcryptjs": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.6.0",
     "eslint": "^8.48.0",

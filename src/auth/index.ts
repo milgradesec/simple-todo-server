@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler } from "hono";
 
 const TOKEN_STRINGS = '[A-Za-z0-9._~+/-]+=*';
 const PREFIX = 'Bearer';
@@ -33,3 +33,24 @@ export function BearerAuthentication(options: {
         await next();
     };
 }
+
+
+// // Hash a password
+// async function hashPassword(password: string): Promise<string> {
+//   try {
+//     const hashedPassword = await argon2.hash(password);
+//     return hashedPassword;
+//   } catch (error) {
+//     throw new Error('Error hashing password: ' + error.message);
+//   }
+// }
+
+// // Verify a password
+// async function verifyPassword(inputPassword: string, hashedPassword: string): Promise<boolean> {
+//   try {
+//     const isPasswordValid = await argon2.verify(hashedPassword, inputPassword);
+//     return isPasswordValid;
+//   } catch (error) {
+//     throw new Error('Error verifying password: ' + error.message);
+//   }
+// }
