@@ -7,13 +7,15 @@
     "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@tsndr/cloudflare-worker-jwt": "^2.2.2",
     "bcryptjs": "^2.4.3",
-    "hono": "^3.5.7"
+    "hono": "^3.5.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230904.0",
     "@types/bcryptjs": "^2.4.3",
-    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
     "eslint": "^8.48.0",
     "typescript": "^5.2.2"

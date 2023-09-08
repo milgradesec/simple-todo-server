@@ -7,9 +7,8 @@ import { BearerAuthentication } from './auth';
 
 type Bindings = {
     DB: D1Database
+    AUTH_SECRET_KEY: string
 }
-
-const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImRlZmF1bHQiLCJ1c2VySWQiOjB9.tkgKzEdeIC14dpfQTv9AsaTHFyefrmHaVVXiJQ9MA24";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -34,7 +33,7 @@ app.post("/login", async (c) => {
 /**
  * Authentication middleware.
  */
-app.use("/users/*", BearerAuthentication({ token: TOKEN }));
+app.use("/users/*", BearerAuthentication({}));
 
 /**
  * Change password.

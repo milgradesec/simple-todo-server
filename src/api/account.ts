@@ -1,7 +1,6 @@
 import { Context } from "hono";
 import * as bcrypt from "bcryptjs";
-
-const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImRlZmF1bHQiLCJ1c2VySWQiOjB9.tkgKzEdeIC14dpfQTv9AsaTHFyefrmHaVVXiJQ9MA24";
+import jwt from "@tsndr/cloudflare-worker-jwt";
 
 export async function registerHandler(c: Context): Promise<Response> {
     const { username, password } = await c.req.json();
@@ -33,7 +32,7 @@ export async function registerHandler(c: Context): Promise<Response> {
     if (row == null) {
         return c.json({ error: "Unkown database error" }, 500);
     }
-    return c.json({ id: row.id, token: TOKEN }, 200);
+    return c.json({ id: row.id, token: await generateJwt(username, row.id, c.env.AUTH_SECRET_KEY) }, 200);
 }
 
 export async function loginHandler(c: Context): Promise<Response> {
@@ -45,7 +44,7 @@ export async function loginHandler(c: Context): Promise<Response> {
         .bind(username)
         .first();
     if (row != null && bcrypt.compareSync(password, row.password)) {
-        return c.json({ id: row.id, token: TOKEN });
+        return c.json({ id: row.id, token: await generateJwt(username, row.id, c.env.AUTH_SECRET_KEY) });
     }
     return c.json({ error: "Invalid authentication" }, 401);
 }
@@ -73,4 +72,12 @@ export async function changePasswordHandler(c: Context): Promise<Response> {
         return c.json({ error: "Unkown database error" }, 500);
     }
     return c.text("OK", 200);
+}
+
+async function generateJwt(username: string, userId: number, secretKey: string): Promise<string> {
+    const userData = {
+        username: username,
+        userId: userId,
+    };
+    return await jwt.sign(userData, secretKey);
 }
