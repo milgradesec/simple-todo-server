@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+
 import * as Account from './api/account';
 import * as Lists from './api/lists';
 import * as Notes from './api/notes';

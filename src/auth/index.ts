@@ -1,5 +1,5 @@
-import type { MiddlewareHandler } from "hono";
-import jwt from "@tsndr/cloudflare-worker-jwt";
+import jwt from '@tsndr/cloudflare-worker-jwt';
+import type { MiddlewareHandler } from 'hono';
 
 const TOKEN_STRINGS = '[A-Za-z0-9._~+/-]+=*';
 const PREFIX = 'Bearer';
