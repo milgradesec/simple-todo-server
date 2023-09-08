@@ -3,12 +3,26 @@ main = "src/index.ts"
 compatibility_date = "2023-08-15"
 usage_model = "bundled"
 
-env = { }
-
 [triggers]
 crons = [ ]
 
 [[ d1_databases ]]
+binding = "DB"
+database_name = "todo-api-prod"
+database_id = "2971226e-6498-4603-a8fc-88fcfee005ea"
+
+[env.staging]
+workers_dev = true
+
+[[env.staging.d1_databases]]
+  binding = "DB"
+  database_name = "todo-api-prod"
+  database_id = "2971226e-6498-4603-a8fc-88fcfee005ea"
+
+[env.production]
+route = { pattern = "todo-api.paesa.es", custom_domain = true }
+
+[[ env.production.d1_databases ]]
 binding = "DB"
 database_name = "todo-api-prod"
 database_id = "2971226e-6498-4603-a8fc-88fcfee005ea"
