@@ -1,6 +1,6 @@
 name = "todo-api"
 main = "src/index.ts"
-compatibility_date = "2023-07-24"
+compatibility_date = "2023-08-15"
 usage_model = "bundled"
 
 env = { }
