@@ -1,13 +1,13 @@
 import { Context } from "hono";
 
 export async function createHandler(c: Context): Promise<Response> {
-    const { userId } = c.req.param();
+    const { userId, listId } = c.req.param();
     const { title, content, status } = await c.req.json();
 
     const result = await c.env.DB.prepare(
-        `INSERT INTO notes (title, content, status, user_id) VALUES(?1,?2,?3,?4)`
+        `INSERT INTO notes (title, content, status, user_id, list_id) VALUES(?1,?2,?3,?4,?5)`
     )
-        .bind(title, content, status, userId)
+        .bind(title, content, status, userId, listId)
         .run();
     if (!result.success) {
         return c.json({ error: "Unkown database error" }, 500);

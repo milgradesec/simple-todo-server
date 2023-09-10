@@ -20,7 +20,9 @@ CREATE TABLE IF NOT EXISTS notes (
     content TEXT NOT NULL,
     status INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES users(id)
+    list_id INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(list_id) REFERENCES lists(id)
 );
 CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
