@@ -127,6 +127,18 @@ app.delete("/users/:userId/tasks/:taskId", async (c) => {
     return Tasks.deleteHandler(c);
 });
 
+
+/**
+ * Friends
+ */
+app.get("/users/:userId/friends", async (c) => {
+    return c.json({ error: "Not implemented" }, 501);
+});
+
+app.get("/users/:userId/friendRequests", async (c) => {
+    return c.json({ error: "Not implemented" }, 501);
+});
+
 /**
  * Error handler.
  */
