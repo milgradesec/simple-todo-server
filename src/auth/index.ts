@@ -20,7 +20,7 @@ export function BearerAuthentication(options: {
         const regexp = new RegExp('^' + options.prefix + ' +(' + TOKEN_STRINGS + ') *$');
         const match = regexp.exec(headerToken);
         if (!match) {
-            return c.json({ error: "Bad Request: invalid token format" }, 400);
+            return c.json({ error: "Invalid token format" }, 400);
         }
 
         if (!await jwt.verify(match[1], secretkey)) {
