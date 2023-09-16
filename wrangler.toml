@@ -8,7 +8,7 @@ crons = [ ]
 
 [[ d1_databases ]]
 binding = "DB"
-database_name = "todo-api-stag"
+database_name = "todo-api-dev"
 database_id = "888a70de-667a-4c36-b897-bbf605cc0948"
 
 [env.staging]
