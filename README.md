@@ -1,4 +1,4 @@
-# simple-todo-server
+# todo-api
 
 ```shell
 wrangler d1 execute todo-api-prod --local --file=./schema.sql
