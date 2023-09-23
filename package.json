@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "dev-remote": "wrangler dev --remote",
+    "load-db": "wrangler d1 execute todo-api-dev --local --file=schema.sql",
     "deploy:stag": "wrangler deploy --env staging",
     "deploy:prod": "wrangler deploy --env production"
   },
