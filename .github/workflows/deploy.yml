@@ -15,4 +15,5 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          wranglerVersion: "3.9.0"
           command: deploy --env staging
