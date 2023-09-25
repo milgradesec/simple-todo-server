@@ -1,0 +1,27 @@
+{
+  "name": "todo-api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev-remote": "wrangler dev --remote",
+    "load-db:local": "wrangler d1 execute todo-api-dev --local --file=schema.sql",
+    "load-db:stag": "wrangler d1 execute todo-api-stag --file=schema.sql",
+    "deploy:stag": "wrangler deploy --env staging",
+    "deploy:prod": "wrangler deploy --env production"
+  },
+  "dependencies": {
+    "@tsndr/cloudflare-worker-jwt": "^2.2.2",
+    "bcryptjs": "^2.4.3",
+    "hono": "^3.7.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230914.0",
+    "@types/bcryptjs": "^2.4.4",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2"
+  }
+}
