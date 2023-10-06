@@ -13,7 +13,7 @@
   "dependencies": {
     "@tsndr/cloudflare-worker-jwt": "^2.2.5",
     "bcryptjs": "^2.4.3",
-    "hono": "^3.7.4"
+    "hono": "^3.7.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231002.0",
