@@ -1,0 +1,28 @@
+name = "todo-api"
+main = "src/index.ts"
+compatibility_date = "2023-08-15"
+usage_model = "bundled"
+
+[triggers]
+crons = [ ]
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "todo-api-dev"
+database_id = "888a70de-667a-4c36-b897-bbf605cc0948"
+
+[env.staging]
+workers_dev = true
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "todo-api-stag"
+database_id = "948369e7-cd48-4ad3-bf0d-69cfcb99bcb3"
+
+[env.production]
+route = { pattern = "todo-api.paesa.es", custom_domain = true }
+
+[[ env.production.d1_databases ]]
+binding = "DB"
+database_name = "todo-api-prod"
+database_id = "2a39f640-5c96-4f14-8d22-de76ad40bc7c"
