@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "format": "prettier --write '**/*.{js,ts,css,json,md}'",
+    "fmt": "prettier --write '**/*.{js,ts,css,json,md}'",
     "dev": "wrangler dev",
     "dev-remote": "wrangler dev --remote",
     "load-db:local": "wrangler d1 execute todo-api-dev --local --file=schema.sql",
