@@ -1,7 +1,6 @@
 name = "todo-api"
 main = "src/index.ts"
 compatibility_date = "2023-08-15"
-usage_model = "bundled"
 
 [triggers]
 crons = [ ]
